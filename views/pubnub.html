@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+          <script src="http://cdn.pubnub.com/pubnub-3.7.12.min.js"></script>
+</head>
+<body>
+<script>
+    function subscribe(channel_name) {
+
+        pubnub = PUBNUB({
+            publish_key: 'pub-c-a822747c-d909-468a-b501-d0a0552d039a',
+            subscribe_key: 'sub-c-6e6e2de2-d471-11e4-b585-0619f8945a4f'
+        })
+
+        pubnub.subscribe({
+            channel: channel_name,
+            message: function (message, env, ch, timer, magic_ch) {
+                var div = document.getElementById('chat');
+                div.innerHTML = div.innerHTML + 'Other Person : ' + message + '<br>';
+            }
+        })
+
+    }
+        function pub(receiver_name , message) {
+            pubnub.publish({
+                channel : receiver_name,
+                message : message,
+                callback: function(m){
+                    var div = document.getElementById('chat');
+                    div.innerHTML = div.innerHTML + 'Me : '+message  + '<br>';
+                }
+            })
+        }
+
+
+
+
+
+
+var data = <%- data %>
+    subscribe(data.me)
+
+    function send(message){
+        document.getElementById('text').value = "";
+        pub(data.to , message)
+    }
+</script>
+<form method="get">
+    <input type="text" id="text"  />
+    <input type="button" value="Send" onclick="send(document.getElementById('text').value)">
+    </form>
+<div id="chat"><%= data.name %>
+</div>
+</body>
+</html>
